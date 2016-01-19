@@ -45,6 +45,12 @@ int main(){
    for(int j=0; j<Nk; j++){
 
       // step + swap here
+step(u2,u1,u0,dt,dx,N);
+h=u0;
+u0=u1;
+u1=u2;
+u2=h;
+
 
       t +=dt;
    }
@@ -64,7 +70,14 @@ int main(){
 void step(double* const u2, const double* const u1,const double* const u0,
           const double dt, const double dx, const int N)
 {
-
+const double c=-dt/dx;
+u2[0]= u0[0]+u1[0]*c*(u1[1]-u1[N-1]);
+u2[N-1]= u0[N-1]+u1[N-1]*c*(u1[0]-u1[N-2]);
+for(int i=1;i<N;i++)
+{
+  u2[i]= u0[i]+u1[i]*c*(u1[i+1]-u1[i-1]);
+  
+} 
 
 }
 //-----------------------------------------------
@@ -75,7 +88,12 @@ void initialize(double* const u1, double* const u0, const double dx,
    for(int i=0; i<N; i++)
    {
      double x = xmin + i*dx;
-
+      u=sin(2*M_PI*x);
+      ux=2*M_PI*cos(2*M_PI*x);
+      uxx=-4*pow(M_PI,2)*sin(2*M_PI*x);
+      
+      u0[i]=u+dt*u*ux+(pow(dt,2)/2)*(2*u*pow(ux,2)+pow(u,2)*uxx);
+      u1[i]=u;
      
    }
 }
